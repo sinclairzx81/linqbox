@@ -40,6 +40,14 @@ import {
     GroupIntoClause, GroupByClause, SelectClause, QueryExpression, Then, ConstClause
 } from './syntax'
 
+
+/** Polyfill for missing [].flat() on older versions of node. */
+function flatDeep(arr: any[], d = 1): any[] {
+    return d > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val), [])
+                 : arr.slice();
+}
+
+
 // -----------------------------------------------------------------------
 // JavaScript
 // -----------------------------------------------------------------------
@@ -204,7 +212,7 @@ export const delimited = <T>(element: Parser<T>, delimiter: Parser<any>) => (str
         seq([element])
     ])(stream)
     if (result.success()) {
-        const captures = result.value().flat(2)
+        const captures = flatDeep(result.value(), 2) // result.value().flat(2)
         if (captures.length % 2 === 0) { captures.pop() } // ,
         const elements = captures.filter((_, index) => index % 2 === 0) as T[]
         return [Result.ok(elements), next]
@@ -221,7 +229,7 @@ export const enclosed_delimited = <T>(open: Parser<any>, element: Parser<T>, clo
     ])(stream)
 
     if (result.success()) {
-        const captures = result.value().flat(2)
+        const captures = flatDeep(result.value(), 2) // result.value().flat(2)
         captures.shift()
         captures.pop()
         if (captures.length % 2 === 0) { captures.pop() } // ,
@@ -672,7 +680,7 @@ export const binary_expression_oprand = (stream: TokenStream): [Result<Expressio
 export const binary_expression = (stream: TokenStream): [Result<BinaryExpression>, TokenStream] => {
     const select = seq([binary_expression_oprand, one_or_more(seq([binary_operator, binary_expression_oprand]))])
     return map(select, results => {
-        const sequence = results.flat(2) // expect minimum 3 elements
+        const sequence = flatDeep(results, 2) // results.flat(2) // expect minimum 3 elements
         const reduced = binary_operator_precedence.reduce((items, operator) => {
             return items.length === 1 ? items : binary_expression_reduce_operator(items, operator as BinaryOperator)
         }, sequence)
