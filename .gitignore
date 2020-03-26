@@ -1,0 +1,7 @@
+node_modules
+dist
+
+# artifacts
+doc/linqbox.blend1
+example.js
+spec.js

@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "target": "ESNext",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "declaration": true
+    }, "files": [
+        "index.ts"
+    ]
+}
