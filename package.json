@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/sinclairzx81/linqbox"
   },
-  "version": "0.7.2",
+  "version": "0.7.3",
   "main": "index.js",
   "scripts": {
     "start": "smoke-task start",

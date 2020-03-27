@@ -62,50 +62,77 @@ $ npm install @sinclair/linqbox
 
 ## Syntax
 
-Linqbox implements a JavaScript version of LINQ as one would probably imagine it. Internally Linqbox parses for all JavaScript expressions (except functions) and constructs <a href="https://github.com/estree/estree">ESTree</a> based expressions trees that are extended to support the standard set of LINQ clauses and keywords. 
+Linqbox implements a JavaScript version of LINQ as one would probably imagine it. Internally Linqbox parses for all JavaScript expressions (except functions) and constructs <a href="https://github.com/estree/estree">ESTree</a> based expressions trees that are extended to support the standard set of LINQ clauses and keywords. The following is a brief example of its usage. For more comprehensive information on LINQ, refer to the official Microsoft documentation located [here](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/).
 
-The following illustrates basic usage with an arbitrary query that uses <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/from-clause">from</a>, <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/where-clause">where</a>, <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/orderby-clause">orderby</a> and <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/select-clause">select</a>.
+### Example
 
 ```typescript
 import { linq } from '@sinclair/linqbox'
 
 const users = [
-    { userid: 0, firstname: 'dave', lastname: 'smith' },
-    { userid: 1, firstname: 'smith', lastname: 'rogers' },
-    { userid: 2, firstname: 'jones', lastname: 'edgar' },
-    { userid: 3, firstname: 'alice', lastname: 'jenkins' }
+  { userid: 0, name: 'dave' },
+  { userid: 1, name: 'bob' },
+  { userid: 2, name: 'alice' },
+  { userid: 3, name: 'roger' },
+]
+const records = [
+  { recordid: 0, userid: 0, data : 'toaster' },
+  { recordid: 1, userid: 2, data : 'fridge' },
+  { recordid: 2, userid: 1, data : 'television' },
+  { recordid: 3, userid: 4, data : 'toaster' },
+  { recordid: 4, userid: 2, data : 'stove' },
+  { recordid: 5, userid: 0, data : 'couch' },
+  { recordid: 6, userid: 2, data : 'computer' },
+  { recordid: 7, userid: 2, data : 'washing machine' },
+  { recordid: 8, userid: 3, data : 'remote control' },
+  { recordid: 9, userid: 1, data : 'air conditioner' },
 ]
 
-const query = linq`
-    from user in ${users} 
-    where user.userid > 1
-    const fullname = [
-        user.firstname, 
-        user.lastname
-    ].join(' ')
-    orderby user.firstname
-    select { 
-        ...user, 
-        fullname
-    }`
+const query = linq `
+  from user in ${users}
+  join record in ${records}
+    on user.userid equals record.userid 
+      into records
+  select {
+    user,
+    records
+  }`
 
-for (const user of query) {
-    console.log(user)
+for(const value of query) {
+  console.log(value)
 }
+
 ```
 Results in the following output
 ```javascript
 {
-  userid: 3,
-  firstname: 'alice',
-  lastname: 'jenkins',
-  fullname: 'alice jenkins'
+    user: { userid: 0, name: 'dave' },
+    records: [
+        { recordid: 0, userid: 0, data: 'toaster' },
+        { recordid: 5, userid: 0, data: 'couch' }
+    ]
 }
 {
-  userid: 2,
-  firstname: 'jones',
-  lastname: 'edgar',
-  fullname: 'jones edgar'
+    user: { userid: 1, name: 'bob' },
+    records: [
+        { recordid: 2, userid: 1, data: 'television' },
+        { recordid: 9, userid: 1, data: 'air conditioner' }
+    ]
+}
+{
+    user: { userid: 2, name: 'alice' },
+    records: [
+        { recordid: 1, userid: 2, data: 'fridge' },
+        { recordid: 4, userid: 2, data: 'stove' },
+        { recordid: 6, userid: 2, data: 'computer' },
+        { recordid: 7, userid: 2, data: 'washing machine' }
+    ]
+}
+{
+    user: { userid: 3, name: 'roger' },
+    records: [
+        { recordid: 8, userid: 3, data: 'remote control' }
+    ]
 }
 ```
 <a name="Keywords"></a>
