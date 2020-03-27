@@ -42,7 +42,7 @@ export class Enumerable<T> {
     }
 }
 
-/** [Tagged Template Literal] Parses the given LINQ expression and returns a Queryable<T>. */
+/** [Tagged Template Literal] Parses the given LINQ expression and returns a Enumerable<T>. */
 export function linq<T = any>(...args: any[]): Enumerable<T> {
     const tokens = tokenize(input(...args), [
         TokenKind.Whitespace,
