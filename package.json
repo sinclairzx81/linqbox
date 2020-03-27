@@ -1,17 +1,14 @@
 {
   "name": "@sinclair/linqbox",
   "description": "Language Integrated Query for JavaScript",
-  "keywords": [
-    "linq",
-    "javascript",
-    "query-builder"
-  ],
+  "version": "0.7.4",
+  "keywords": ["linq", "javascript", "query-builder"],
   "repository": {
     "type": "git",
     "url": "https://github.com/sinclairzx81/linqbox"
   },
-  "version": "0.7.3",
-  "main": "index.js",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "scripts": {
     "start": "smoke-task start",
     "build": "smoke-task build",
