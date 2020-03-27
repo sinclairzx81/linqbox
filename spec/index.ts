@@ -24,9 +24,14 @@ const query = linq `
   join record in ${records}
     on user.userid equals record.userid 
       into records
+  orderby user.name
   select {
     user,
-    records
+    records: [
+        ...from n in records 
+           orderby n.data 
+           select n
+        ]
   }`
 
 for(const value of query) {
